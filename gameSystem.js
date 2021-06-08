@@ -179,21 +179,54 @@ class Chara {
     
     blockSet(keyboard){
         if(keyboard.w === true && keyboard.a === true && Math.floor(this.x/32) - 1 !== -1){
-            let block = this.world.map[Math.floor(this.y/32) - 1][Math.floor(this.x/32) -1]
+            let block = this.world.map[Math.floor(this.y/32) - 1][Math.floor(this.x/32) -1];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32) - 1].splice(Math.floor(this.x/32) - 1,1,1);
+                console.log('koko');
+            }
         }else if(keyboard.w === true && keyboard.d === true){
-            let block = this.world.map[Math.floor(this.y/32) - 1][Math.floor(this.x/32) +1]
+            let block = this.world.map[Math.floor(this.y/32) - 1][Math.floor(this.x/32) +1];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32) - 1].splice(Math.floor(this.x/32) + 1,1,1);
+                console.log('koko');
+            }
         }else if(keyboard.d === true && keyboard.s === true){
-            let block = this.world.map[Math.floor(this.y/32) + 1][Math.floor(this.x/32) +1]
+            let block = this.world.map[Math.floor(this.y/32) + 1][Math.floor(this.x/32) +1];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32) + 1].splice(Math.floor(this.x/32) + 1,1,1);
+                console.log('koko');
+            }
         }else if(keyboard.s === true && keyboard.a === true && Math.floor(this.x/32) - 32 !== -1){
-            let block = this.world.map[Math.floor(this.y/32) + 1][Math.floor(this.x/32) -1]
+            let block = this.world.map[Math.floor(this.y/32) + 1][Math.floor(this.x/32) -1];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32) + 1].splice(Math.floor(this.x/32) - 1,1,1);
+                console.log('koko');
+            }
         }else if(keyboard.a === true && Math.floor(this.x/32) - 1 !== -1){
-            let block = this.world.map[Math.floor(this.y/32)][Math.floor(this.x/32) -1]
+            let block = this.world.map[Math.floor(this.y/32)][Math.floor(this.x/32) -1];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32)].splice(Math.floor(this.x/32) - 1,1,1);
+                console.log('koko');
+            }
         }else if(keyboard.w === true){
-            let block = this.world.map[Math.floor(this.y/32) - 1][Math.floor(this.x/32)]
+            let block = this.world.map[Math.floor(this.y/32) - 1][Math.floor(this.x/32)];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32) - 1].splice(Math.floor(this.x/32),1,1);
+                console.log('koko');
+            }
         }else if(keyboard.d === true){
-            let block = this.world.map[Math.floor(this.y/32)][Math.floor(this.x/32) +1]
+            let block = this.world.map[Math.floor(this.y/32)][Math.floor(this.x/32) +1];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32)].splice(Math.floor(this.x/32) + 1,1,1);
+                console.log('koko');
+            }
         }else if(keyboard.s === true){
-            let block = this.world.map[Math.floor(this.y/32) + 1][Math.floor(this.x/32)]
+            let block = this.world.map[Math.floor(this.y/32) + 1][Math.floor(this.x/32)];
+            if(block === 0){
+                this.world.map[Math.floor(this.y/32) + 1].splice(Math.floor(this.x/32),1,1);
+                console.log('koko');
+            }
+            console.log('ここまではいく');
         }else{
             
         }
