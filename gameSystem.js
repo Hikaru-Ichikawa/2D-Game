@@ -101,7 +101,7 @@ class Chara {
         
         if(keyboard.w === true && this.world.map[Math.round((this.y)/32 + 1)][Math.round(this.x/32)] !==0){
             // ジャンプに関する条件分岐
-            this.vy -= 7;
+            this.vy = -15;
         }
 
         if(keyboard.left === true){
