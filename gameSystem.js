@@ -99,9 +99,9 @@ class Chara {
             this.vx += 0.5;
         }
         
-        if(keyboard.w === true && this.world.map[Math.floor((this.y)/32 + 1)][Math.floor(this.x/32)] !==0){
+        if(keyboard.w === true && this.world.map[Math.round((this.y)/32 + 1)][Math.round(this.x/32)] !==0){
             // ジャンプに関する条件分岐
-            this.vy -= 15;
+            this.vy -= 7;
         }
 
         if(keyboard.left === true){
