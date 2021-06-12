@@ -34,7 +34,7 @@ class Game {
         */
         
         if(this.gameMode === 0){
-            
+            menu.drawMenu()
         }else if(this.gameMode === 1){
             
         }else if(this.gameMode === 2){
@@ -50,6 +50,9 @@ class World {
         this.game = game;
         
         this.makeMap(mapHeight,mapLength);
+        
+        this.backgroundImage0 = new Image();
+        this.backgroundImage0.src = 'sources/backgrounds/background.jpg';
         
         this.blockImage0 = new Image();
         this.blockImage0.src = 'sources/blocks/mapChip.png';
@@ -82,6 +85,9 @@ class World {
     }
     
     drawMap (){
+        
+        this.game.ctx.drawImage(this.backgroundImage0,0,0,this.game.canvas.width,this.game.canvas.height);
+        
         for(let y in this.game.map){
             for(let x in this.game.map){
                 /*
@@ -116,30 +122,40 @@ class World {
     }
 }
 
-class MainMenu {
+class Menu {
     constructor(game){
         this.game = game;
-        this.firstLayerNumber = 0;
-        this.secoundLayerNumber = 0;
-    }
-    
-    drawFirstLayer(){
         
+        this.backgroundImage0 = new Image();
+        this.backgroundImage0.src = 'sources/backgrounds/mainImage2.jpg';
+        
+        window.addEventListener('keydown',this.keydown.bind(this));
     }
     
-    drawSe
+    drawMenu(){
+        this.game.ctx.drawImage(this.backgroundImage0,0,0,this.game.canvas.width,this.game.canvas.height);
+    }
+    
+    keydown(event){
+        let code = event;
+        if(!Number.isInteger(code)){
+            code = event.keyCode;
+        }
+        if(code === 13){
+            this.game.gameMode = 2;
+        }
+    }
     
 }
 
 const game = new Game();
 
-/*
 const menu = new Menu(game);
 
-const name = new Name(game);
-*/
+// const name = new Name(game);
+
 const world = new World(game);
 
-game.gameMode = 2;
+game.gameMode = 0;
 
 game.main();
