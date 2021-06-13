@@ -130,10 +130,24 @@ class Menu {
         this.backgroundImage0.src = 'sources/backgrounds/mainImage2.jpg';
         
         window.addEventListener('keydown',this.keydown.bind(this));
+        
+        this.selectNum = 0;
+        this.selectList = ['Play','config','quit'];
+        
+        this.fontSize = 60;
     }
     
     drawMenu(){
         this.game.ctx.drawImage(this.backgroundImage0,0,0,this.game.canvas.width,this.game.canvas.height);
+        for(let i=0; i < this.selectList.length; i++){
+            this.game.ctx.fillStyle = '#000';
+            this.game.ctx.font = this.fontSize + 'px "sans-serif"';
+            this.game.ctx.textBaseline = 'top';
+            if(i === this.selectNum%this.selectList.length){
+                this.game.ctx.fillStyle = '#f00';
+            }
+            this.game.ctx.fillText(this.selectList[i],30,i*this.fontSize);
+        }
     }
     
     keydown(event){
@@ -142,7 +156,21 @@ class Menu {
             code = event.keyCode;
         }
         if(code === 13){
-            this.game.gameMode = 2;
+            if(this.selectNum%this.selectList.length === 0){
+                this.game.gameMode = 2;
+            }
+        }
+        
+        if(code === 40){
+            this.selectNum++;
+            if(this.selectNum >= this.selectList.length){
+                this.selectNum = this.selectList.length - 1;
+            }
+        }else if(code === 38){
+            this.selectNum--;
+            if(this.selectNum < 0){
+                this.selectNum = 0;
+            }
         }
     }
     
