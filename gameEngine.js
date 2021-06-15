@@ -138,11 +138,18 @@ class Charactor{
         this.preY = y;
         this.vx = 0;
         this.vy = 0;
+        this.preVx = this.vx;
+        this.preVy = this.vy;
+        
+        this.maxHp = 100;
+        this.hp = 100;
         
         this.SPEED = 1;
+        this.MAXSPEED = 6;
         this.jump = 10;
-        this.FRICTION = 0.2;
+        this.FRICTION = 0.3;
         this.GRAVITY = 0.4;
+        this.chanceGetForceDamage = 8;
         
         this.preMotion = 'right';
         
@@ -174,6 +181,10 @@ class Charactor{
         this.imageUp.sw = 48.5;
         this.imageUp.sh = 48.5;
         
+        this.STATUSHEIGHT = 25;
+        this.STATUSWIDTH = 200;
+        this.STATUSX = 10;
+        this.STATUSY = 10;
         
     }
     
@@ -181,6 +192,8 @@ class Charactor{
         
         this.preX = this.x;
         this.preY = this.y;
+        this.preVx = this.vx;
+        this.preVy = this.vy;
         
         this.move();
         
@@ -191,6 +204,10 @@ class Charactor{
         this.caluculate();
         
         this.hitBox();
+        
+        this.getDamage();
+        
+        this.showHP();
         
         if(this.preMotion === 'right'){
             this.game.ctx.drawImage(this.imageRight,this.imageRight.sx,this.imageRight.sy,this.imageRight.sw,this.imageRight.sh,this.x,this.y,32,32);
@@ -205,10 +222,10 @@ class Charactor{
     }
     
     move(){
-        if(this.keyboard.right === true){
+        if(this.keyboard.right === true && this.vx < this.MAXSPEED){
             this.vx += this.SPEED;
             this.preMotion = 'right';
-        }else if(this.keyboard.left === true){
+        }else if(this.keyboard.left === true && this.vx > -this.MAXSPEED){
             this.vx -= this.SPEED;
             this.preMotion = 'left';
         }else if(this.keyboard.down === true){
@@ -284,6 +301,46 @@ class Charactor{
         this.x += this.vx;
         this.y += this.vy;
     }
+    
+    showHP(){
+        this.game.ctx.fillStyle = '#000';
+        this.game.ctx.fillRect(this.STATUSX,this.STATUSY,this.STATUSWIDTH,this.STATUSHEIGHT);
+        this.game.ctx.fillStyle = '#0F0';
+        this.game.ctx.fillRect(this.STATUSX,this.STATUSY,this.STATUSWIDTH*(this.hp/this.maxHp),this.STATUSHEIGHT);
+    }
+    
+    getDamage(){
+        if(Math.abs(this.vx - this.preVx) > this.chanceGetForceDamage){
+            this.hp -= Math.abs(this.vx - this.preVx);
+            console.log('damageX!');
+            this.confirmAlive();
+        }
+        
+        if(Math.abs(this.vy -this.preVy) > this.chanceGetForceDamage){
+            this.hp -= Math.abs(this.vy - this.preVy);
+            console.log('damageY!');
+            this.confirmAlive();
+        }
+        
+        // 敵からの攻撃判定などをここに記述
+        
+    }
+    
+    confirmAlive(){
+        if(this.hp < 0){
+            this.game.gameMode = 0;
+            
+            // ステータス初期化
+            this.vx = 0;
+            this.vy = 0;
+            this.preVx = this.vx;
+            this.preVy = this.vy;
+        
+            this.maxHp = 100;
+            this.hp = 100;
+        }
+    }
+    
 }
 
 
