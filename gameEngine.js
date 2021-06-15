@@ -153,8 +153,13 @@ class Charactor{
         this.maxHp = 100;
         this.hp = 100;
         
-        this.SPEED = 1;
-        this.MAXSPEED = 6;
+        // SPEEDとMAXSPEED変数になっちゃいました。ごめんなさい。
+        this.NORMALSPEED = 1;
+        this.NORMALMAXSPEED = 7;
+        this.SLOWSPEED = 0.5;
+        this.SLOWMAXSPEED = 3;
+        this.SPEED = this.NORMALSPEED;
+        this.MAXSPEED = this.NORMALMAXSPEED;
         this.jump = 7;
         this.FRICTION = 0.3;
         this.GRAVITY = 0.4;
@@ -239,6 +244,13 @@ class Charactor{
     }
     
     move(){
+        if(this.keyboard.shift === true){
+            this.SPEED = this.SLOWSPEED;
+            this.MAXSPEED = this.SLOWMAXSPEED;
+        }else{
+            this.SPEED = this.NORMALSPEED;
+            this.MAXSPEED =this.NORMALMAXSPEED;
+        }
         if(this.keyboard.right === true && this.vx < this.MAXSPEED){
             this.vx += this.SPEED;
             this.preMotion = 'right';
@@ -259,7 +271,7 @@ class Charactor{
             }
         }
         
-        if(this.keyboard.space === true && ((this.game.map[Math.floor((this.y + 35)/32)][Math.floor(this.x/32)] !== 0) ||(this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x + 32)/32)] !== 0))){
+        if(this.keyboard.space === true && ((this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x+2)/32)] !== 0) ||(this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x + 30)/32)] !== 0))){
             this.vy -= this.jump;
         }
     }
@@ -295,7 +307,7 @@ class Charactor{
     }
     
     touchBlock(){
-        if((this.game.map[Math.floor((this.y + 40)/32)][Math.floor(this.x/32)] !== 0) || (this.game.map[Math.floor((this.y + 40)/32)][Math.floor(this.x/32 + 32)] !== 0)){
+        if((this.game.map[Math.floor((this.y + 40)/32)][Math.floor(this.x/32)] !== 0) || (this.game.map[Math.floor((this.y + 40)/32)][Math.floor((this.x+32)/32)] !== 0)){
             if(this.vx < this.FRICTION && this.vx > 0){
                 this.vx = 0;
             }else if(this.vx > -this.FRICTION && this.vx < 0){
