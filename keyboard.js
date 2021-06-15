@@ -1,5 +1,5 @@
 // （注意）このモジュールを使うとグローバル定数keyboardを定義する。
-
+// enterキーの追加
 class Keyboard {
     constructor(){
         // 方向キー
@@ -23,6 +23,9 @@ class Keyboard {
         this.e = false;
         this.q = false;
         this.t = false;
+        
+        // 決定キー
+        this.enter = false;
         
     }
 }
@@ -90,6 +93,10 @@ function keyDown(event){
             
         case 84:
             keyboard.t = true;
+            break;
+            
+        case 13:
+            keyboard.enter = true;
             break;
             
         default:
@@ -162,6 +169,10 @@ function keyUp (event){
             
         case 84:
             keyboard.t = false;
+            break;
+            
+        case 13:
+            keyboard.enter = false;
             break;
             
         default:

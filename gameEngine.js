@@ -11,6 +11,9 @@ class Game {
         
         this.map = [];
         
+        this.frame = 0;
+        this.preSelectFrame = 0;
+        
     }
     
     main(){
@@ -39,7 +42,9 @@ class Game {
             
         }else if(this.gameMode === 2){
             world.drawMap();
+            charactor.act();
         }
+        this.frame++;
         window.requestAnimationFrame(this.main.bind(this));
     }
 }
@@ -122,6 +127,167 @@ class World {
     }
 }
 
+class Charactor{
+    constructor(game,x,y){
+        this.game = game;
+        this.keyboard = keyboard;
+        
+        this.x = x;
+        this.y = y;
+        this.preX = x;
+        this.preY = y;
+        this.vx = 0;
+        this.vy = 0;
+        
+        this.SPEED = 1;
+        this.jump = 10;
+        this.FRICTION = 0.2;
+        this.GRAVITY = 0.4;
+        
+        this.preMotion = 'right';
+        
+        this.imageLeft = new Image();
+        this.imageLeft.src = 'sources/charactors/tohoChara.png';
+        this.imageLeft.sx = 0;
+        this.imageLeft.sy = 48.5;
+        this.imageLeft.sw = 48.5;
+        this.imageLeft.sh = 48.5;
+        
+        this.imageRight = new Image();
+        this.imageRight.src = 'sources/charactors/tohoChara.png';
+        this.imageRight.sx = 0;
+        this.imageRight.sy = 97;
+        this.imageRight.sw = 48.5;
+        this.imageRight.sh = 48.5;
+        
+        this.imageCenter = new Image();
+        this.imageCenter.src = 'sources/charactors/tohoChara.png';
+        this.imageCenter.sx = 0;
+        this.imageCenter.sy = 0;
+        this.imageCenter.sw = 48.5;
+        this.imageCenter.sh = 48.5;
+        
+        this.imageUp = new Image();
+        this.imageUp.src = 'sources/charactors/tohoChara.png';
+        this.imageUp.sx = 0;
+        this.imageUp.sy = 145.5;
+        this.imageUp.sw = 48.5;
+        this.imageUp.sh = 48.5;
+        
+        
+    }
+    
+    act(){
+        
+        this.preX = this.x;
+        this.preY = this.y;
+        
+        this.move();
+        
+        this.gravity();
+        
+        this.touchBlock();
+        
+        this.caluculate();
+        
+        this.hitBox();
+        
+        if(this.preMotion === 'right'){
+            this.game.ctx.drawImage(this.imageRight,this.imageRight.sx,this.imageRight.sy,this.imageRight.sw,this.imageRight.sh,this.x,this.y,32,32);
+        }else if(this.preMotion === 'left'){
+            this.game.ctx.drawImage(this.imageLeft,this.imageLeft.sx,this.imageLeft.sy,this.imageLeft.sw,this.imageLeft.sh,this.x,this.y,32,32);
+        }else if(this.preMotion === 'center'){
+            this.game.ctx.drawImage(this.imageCenter,this.imageCenter.sx,this.imageCenter.sy,this.imageCenter.sw,this.imageCenter.sh,this.x,this.y,32,32);
+        }else if(this.preMotion === 'up'){
+            this.game.ctx.drawImage(this.imageUp,this.imageUp.sx,this.imageUp.sy,this.imageUp.sw,this.imageUp.sh,this.x,this.y,32,32);
+        }
+        
+    }
+    
+    move(){
+        if(this.keyboard.right === true){
+            this.vx += this.SPEED;
+            this.preMotion = 'right';
+        }else if(this.keyboard.left === true){
+            this.vx -= this.SPEED;
+            this.preMotion = 'left';
+        }else if(this.keyboard.down === true){
+            this.preMotion = 'center';
+        }else if(this.keyboard.up === true){
+            this.preMotion = 'up';
+        }
+        
+        if(this.game.map[Math.floor((this.y +2)/32)][Math.round(this.x/32)] !== 0){
+            if(this.vx < 0){
+                this.vx += this.FRICTION;
+            }else if(this.vx > 0){
+                this.vx -= this.FRICTION;
+            }
+        }
+        
+        if(this.keyboard.space === true && ((this.game.map[Math.floor((this.y + 35)/32)][Math.floor(this.x/32)] !== 0) ||(this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x + 32)/32)] !== 0))){
+            this.vy -= this.jump;
+        }
+    }
+    
+    hitBox(){
+        if(this.game.map[Math.floor(this.y/32)][Math.floor(this.x/32)] !== 0){
+            this.x = this.preX;
+            this.vx = 0;
+        }else if(this.game.map[Math.floor((this.y+30)/32)][Math.floor(this.x/32)] !== 0){
+            this.x = this.preX;
+            this.vx = 0;
+        }else if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+32)/32)] !== 0){
+            this.x = this.preX;
+            this.vx = 0;
+        }else if(this.game.map[Math.floor((this.y+30)/32)][Math.floor((this.x+32)/32)] !== 0){
+            this.x = this.preX;
+            this.vx = 0;
+        }
+        
+        if(this.game.map[Math.floor(this.y/32)][Math.floor(this.x/32)] !== 0){
+            this.y = this.preY;
+            this.vy = 0;
+        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor(this.x/32)] !== 0){
+            this.y = this.preY;
+            this.vy = 0;
+        }else if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+32)/32)] !== 0){
+            this.y = this.preY;
+            this.vy = 0;
+        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor((this.x+32)/32)] !== 0){
+            this.y = this.preY;
+            this.vy = 0;
+        }
+    }
+    
+    touchBlock(){
+        if((this.game.map[Math.floor((this.y + 40)/32)][Math.floor(this.x/32)] !== 0) || (this.game.map[Math.floor((this.y + 40)/32)][Math.floor(this.x/32 + 32)] !== 0)){
+            if(this.vx < this.FRICTION && this.vx > 0){
+                this.vx = 0;
+            }else if(this.vx > -this.FRICTION && this.vx < 0){
+                this.vx = 0;
+            }
+            
+            if(this.vx < 0){
+                this.vx += this.FRICTION;
+            }else if(this.vx > 0){
+                this.vx -= this.FRICTION;
+            }
+        }
+    }
+    
+    gravity(){
+        this.vy += this.GRAVITY;
+    }
+    
+    caluculate(){
+        this.x += this.vx;
+        this.y += this.vy;
+    }
+}
+
+
+
 class Menu {
     constructor(game){
         this.game = game;
@@ -133,43 +299,43 @@ class Menu {
         
         this.selectNum = 0;
         this.selectList = ['Play','config','quit'];
+        this.WAITFRAME = 10;
         
-        this.fontSize = 60;
+        this.FONTSIZE = 60;
     }
     
     drawMenu(){
+        this.keydown();
         this.game.ctx.drawImage(this.backgroundImage0,0,0,this.game.canvas.width,this.game.canvas.height);
         for(let i=0; i < this.selectList.length; i++){
             this.game.ctx.fillStyle = '#000';
-            this.game.ctx.font = this.fontSize + 'px "sans-serif"';
+            this.game.ctx.font = this.FONTSIZE + 'px "sans-serif"';
             this.game.ctx.textBaseline = 'top';
-            if(i === this.selectNum%this.selectList.length){
+            if(i === this.selectNum){
                 this.game.ctx.fillStyle = '#f00';
             }
-            this.game.ctx.fillText(this.selectList[i],30,i*this.fontSize);
+            this.game.ctx.fillText(this.selectList[i],30,30+i*this.FONTSIZE);
         }
     }
     
-    keydown(event){
-        let code = event;
-        if(!Number.isInteger(code)){
-            code = event.keyCode;
-        }
-        if(code === 13){
-            if(this.selectNum%this.selectList.length === 0){
+    keydown(){
+        if(keyboard.enter === true){
+            if(this.selectNum === 0){
                 this.game.gameMode = 2;
+                this.game.preSelectFrame = this.game.frame;
             }
+            
         }
         
-        if(code === 40){
-            this.selectNum++;
-            if(this.selectNum >= this.selectList.length){
-                this.selectNum = this.selectList.length - 1;
+        if(keyboard.down === true && this.game.frame - this.game.preSelectFrame > this.WAITFRAME){
+            if(this.selectNum + 1 < this.selectList.length){
+                this.selectNum++;
+                this.game.preSelectFrame = this.game.frame;
             }
-        }else if(code === 38){
-            this.selectNum--;
-            if(this.selectNum < 0){
-                this.selectNum = 0;
+        }else if(keyboard.up === true && this.game.frame - this.game.preSelectFrame > this.WAITFRAME){
+            if(this.selectNum > 0){
+                this.selectNum--;
+                this.game.preSelectFrame = this.game.frame;
             }
         }
     }
@@ -183,6 +349,8 @@ const menu = new Menu(game);
 // const name = new Name(game);
 
 const world = new World(game);
+
+const charactor = new Charactor(game,10,10);
 
 game.gameMode = 0;
 
