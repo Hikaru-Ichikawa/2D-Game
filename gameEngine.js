@@ -14,6 +14,15 @@ class Game {
         this.frame = 0;
         this.preSelectFrame = 0;
         
+        this.bgmPlay = new Audio();
+        this.bgmPlay.loop = true;
+        this.bgmPlay.src = 'sources/sounds/bgm3.mp3';
+        
+        // ブラウザの使用上ページを開いてすぐに音を流すことはできないので今回は追加していない。
+        this.bgmMenu = new Audio();
+        this.bgmMenu.loop = true;
+        this.bgmMenu.src = 'sources/sounds/bgmMenu.mp3';
+        
     }
     
     main(){
@@ -146,7 +155,7 @@ class Charactor{
         
         this.SPEED = 1;
         this.MAXSPEED = 6;
-        this.jump = 10;
+        this.jump = 7;
         this.FRICTION = 0.3;
         this.GRAVITY = 0.4;
         this.chanceGetForceDamage = 8;
@@ -186,6 +195,14 @@ class Charactor{
         this.STATUSX = 10;
         this.STATUSY = 10;
         
+        this.soundDamageSmall = new Audio();
+        this.soundDamageSmall.src = 'sources/sounds/hit.mp3';
+        
+        this.soundDamageBig = new Audio();
+        this.soundDamageBig.src = 'sources/sounds/creanHit.mp3';
+        
+        this.soundKnockOut = new Audio();
+        this.soundKnockOut.src = 'sources/sounds/KO.mp3';
     }
     
     act(){
@@ -311,12 +328,26 @@ class Charactor{
     
     getDamage(){
         if(Math.abs(this.vx - this.preVx) > this.chanceGetForceDamage){
+            if(Math.abs(this.vx - this.preVx) > 30){
+                this.soundDamageBig.currentTime = 0;
+                this.soundDamageBig.play();
+            }else{
+                this.soundDamageSmall.currentTime = 0;
+                this.soundDamageSmall.play();
+            }
             this.hp -= Math.abs(this.vx - this.preVx);
             console.log('damageX!');
             this.confirmAlive();
         }
         
         if(Math.abs(this.vy -this.preVy) > this.chanceGetForceDamage){
+            if(Math.abs(this.vy - this.preVy) > 30){
+                this.soundDamageBig.currentTime = 0;
+                this.soundDamageBig.play();
+            }else{
+                this.soundDamageSmall.currentTime = 0;
+                this.soundDamageSmall.play();
+            }
             this.hp -= Math.abs(this.vy - this.preVy);
             console.log('damageY!');
             this.confirmAlive();
@@ -328,6 +359,9 @@ class Charactor{
     
     confirmAlive(){
         if(this.hp < 0){
+            this.soundKnockOut.currentTime = 0;
+            this.soundKnockOut.play();
+            this.game.bgmPlay.pause();
             this.game.gameMode = 0;
             
             // ステータス初期化
@@ -352,13 +386,17 @@ class Menu {
         this.backgroundImage0 = new Image();
         this.backgroundImage0.src = 'sources/backgrounds/mainImage2.jpg';
         
-        window.addEventListener('keydown',this.keydown.bind(this));
-        
         this.selectNum = 0;
         this.selectList = ['Play','config','quit'];
         this.WAITFRAME = 10;
         
         this.FONTSIZE = 60;
+        
+        this.setSound = new Audio();
+        this.setSound.src = 'sources/sounds/set.mp3';
+        
+        this.decideSound = new Audio();
+        this.decideSound.src = 'sources/sounds/decide.mp3';
     }
     
     drawMenu(){
@@ -378,7 +416,11 @@ class Menu {
     keydown(){
         if(keyboard.enter === true){
             if(this.selectNum === 0){
+                this.decideSound.currentTime = 0;
+                this.decideSound.play();
                 this.game.gameMode = 2;
+                this.game.bgmPlay.currentTime = 0;
+                this.game.bgmPlay.play();
                 this.game.preSelectFrame = this.game.frame;
             }
             
@@ -386,11 +428,15 @@ class Menu {
         
         if(keyboard.down === true && this.game.frame - this.game.preSelectFrame > this.WAITFRAME){
             if(this.selectNum + 1 < this.selectList.length){
+                this.setSound.currentTime = 0;
+                this.setSound.play();
                 this.selectNum++;
                 this.game.preSelectFrame = this.game.frame;
             }
         }else if(keyboard.up === true && this.game.frame - this.game.preSelectFrame > this.WAITFRAME){
             if(this.selectNum > 0){
+                this.setSound.currentTime = 0;
+                this.setSound.play();
                 this.selectNum--;
                 this.game.preSelectFrame = this.game.frame;
             }
