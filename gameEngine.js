@@ -9,10 +9,26 @@ class Game {
         this.difficulty = 1;
         this.charaName = null;
         
+        this.backgroundImage0 = new Image();
+        this.backgroundImage0.src = 'sources/backgrounds/background.jpg';
+        
+        this.blockImage0 = new Image();
+        this.blockImage0.src = 'sources/blocks/mapChip.png';
+        
+        this.blockImage1 = new Image();
+        this.blockImage1.src = 'sources/blocks/mapChip.png';
+        
+        this.blockImage2 = new Image();
+        this.blockImage2.src = 'sources/blocks/mapChip.png';
+        
+        this.blockImage3 = new Image();
+        this.blockImage3.src = 'sources/blocks/mapChip.png';
+        
         this.map = [];
         
         this.frame = 0;
         this.preSelectFrame = 0;
+        this.preDigFrame = 0;
         
         this.bgmPlay = new Audio();
         this.bgmPlay.loop = true;
@@ -65,6 +81,7 @@ class World {
         
         this.makeMap(mapHeight,mapLength);
         
+        /*
         this.backgroundImage0 = new Image();
         this.backgroundImage0.src = 'sources/backgrounds/background.jpg';
         
@@ -79,9 +96,10 @@ class World {
         
         this.blockImage3 = new Image();
         this.blockImage3.src = 'sources/blocks/mapChip.png';
+        */
     }
     
-    makeMap(mapHeight = 20,mapLength = 40,){
+    makeMap(mapHeight = Math.floor(this.game.canvas.height/32),mapLength = Math.floor(this.game.canvas.width/32),){
         for(let h = 0;h < mapHeight; h++){
             this.game.map.push([]);
             for(let l = 0;l < mapLength; l++){
@@ -100,10 +118,10 @@ class World {
     
     drawMap (){
         
-        this.game.ctx.drawImage(this.backgroundImage0,0,0,this.game.canvas.width,this.game.canvas.height);
+        this.game.ctx.drawImage(this.game.backgroundImage0,0,0,this.game.canvas.width,this.game.canvas.height);
         
         for(let y in this.game.map){
-            for(let x in this.game.map){
+            for(let x in this.game.map[y]){
                 /*
                 switch(this.map[y][x]){
                     case 0:
@@ -122,13 +140,13 @@ class World {
                 */
                 
                 if(this.game.map[y][x] === 0){
-                    this.game.ctx.drawImage(this.blockImage0,0,32,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage0,0,32,32,32,32*x,32*y,32,32);
                 }else if(this.game.map[y][x] === 1){
-                    this.game.ctx.drawImage(this.blockImage1,64,64,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage1,64,64,32,32,32*x,32*y,32,32);
                 }else if(this.game.map[y][x] === 2){
-                    this.game.ctx.drawImage(this.blockImage2,224,64,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage2,224,64,32,32,32*x,32*y,32,32);
                 }else if(this.game.map[y][x] === 3){
-                    this.game.ctx.drawImage(this.blockImage3,0,64,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage3,0,64,32,32,32*x,32*y,32,32);
                 }
                 
             }
@@ -150,8 +168,18 @@ class Charactor{
         this.preVx = this.vx;
         this.preVy = this.vy;
         
+        this.coreX = (this.x + this.x + 30)/2;
+        this.coreY = (this.y + this.y + 30)/2;
+        
         this.maxHp = 100;
         this.hp = 100;
+        
+        this.blockStock = [];
+        for(let i = 0;i < 9;i++){
+            this.blockStock.push(0);
+        }
+        
+        this.selectBlockNumber = 0;
         
         // SPEEDとMAXSPEED変数になっちゃいました。ごめんなさい。
         this.NORMALSPEED = 1;
@@ -163,7 +191,7 @@ class Charactor{
         this.jump = 7;
         this.FRICTION = 0.3;
         this.GRAVITY = 0.4;
-        this.chanceGetForceDamage = 8;
+        this.chanceGetForceDamage = 15;
         
         this.preMotion = 'right';
         
@@ -200,6 +228,8 @@ class Charactor{
         this.STATUSX = 10;
         this.STATUSY = 10;
         
+        this.DIGINTERVAL = 10;
+        
         this.soundDamageSmall = new Audio();
         this.soundDamageSmall.src = 'sources/sounds/hit.mp3';
         
@@ -212,6 +242,7 @@ class Charactor{
     
     act(){
         
+        // 1フレーム前のx、vxなどの値。変化量から落下ダメージなどを計算
         this.preX = this.x;
         this.preY = this.y;
         this.preVx = this.vx;
@@ -229,7 +260,13 @@ class Charactor{
         
         this.getDamage();
         
+        this.selectBlock();
+        
+        this.setBlock();
+        this.digBlock();
+        
         this.showHP();
+        this.showItems();
         
         if(this.preMotion === 'right'){
             this.game.ctx.drawImage(this.imageRight,this.imageRight.sx,this.imageRight.sy,this.imageRight.sw,this.imageRight.sh,this.x,this.y,32,32);
@@ -272,35 +309,217 @@ class Charactor{
         }
         
         if(this.keyboard.space === true && ((this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x+2)/32)] !== 0) ||(this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x + 30)/32)] !== 0))){
-            this.vy -= this.jump;
+            this.vy = -this.jump;
         }
     }
     
+    showItems(){
+        for(let i = 0;i < 9;i++){
+            this.game.ctx.fillStyle = '#AAA';
+            
+        }
+    }
+    
+    selectBlock(){
+        if(this.keyboard.one === true){
+            this.selectBlockNumber = 1;
+        }else if(this.keyboard.two === true){
+            this.selectBlockNumber = 2;
+        }else if(this.keyboard.three === true){
+            this.selectBlockNumber = 3;
+        }else if(this.keyboard.four === true){
+            this.selectBlockNumber = 4;
+        }else if(this.keyboard.five === true){
+            this.selectBlockNumber = 5;
+        }else if(this.keyboard.six=== true){
+            this.selectBlockNumber = 6;
+        }else if(this.keyboard.seven === true){
+            this.selectBlockNumber = 7;
+        }else if(this.keyboard.eight === true){
+            this.selectBlockNumber = 8;
+        }else if(this.keyboard.nine === true){
+            this.selectBlockNumber = 9;
+        }
+    }
+    
+    showItems(){
+        let BIGFRAMESIZE = 50;
+        let LITTLEFRAMESIZE = 45;
+        let BLOCKSIZE = 40;
+        let BLOCKKINDNUM = 9;
+        
+        for(let i = 1;i < BLOCKKINDNUM;i++){
+            this.game.ctx.fillStyle = '#AAA';
+            if(i === this.selectBlockNumber){
+                this.game.ctx.fillStyle = '#F00';
+            }
+            this.game.ctx.fillRect(this.game.canvas.width - 64 -(BLOCKKINDNUM*BIGFRAMESIZE) + i*BIGFRAMESIZE,20,BIGFRAMESIZE,BIGFRAMESIZE);
+            this.game.ctx.fillStyle = '#888';
+            this.game.ctx.fillRect((this.game.canvas.width - 64 -(BLOCKKINDNUM*BIGFRAMESIZE) + (BIGFRAMESIZE-LITTLEFRAMESIZE)/2) + i*BIGFRAMESIZE,20 + (BIGFRAMESIZE - LITTLEFRAMESIZE)/2,LITTLEFRAMESIZE,LITTLEFRAMESIZE);
+            
+            // ブロックの画像表示をしたい。まだ未完成。
+            switch(i){
+                case 0:
+                    this.game.ctx.drawImage(this.game.blockImage0,0,32,32,32,(this.game.canvas.width - 64 -(BLOCKKINDNUM*BIGFRAMESIZE) + (BIGFRAMESIZE-LITTLEFRAMESIZE)/2) + i*BIGFRAMESIZE,20 + (BIGFRAMESIZE - LITTLEFRAMESIZE)/2,32,32);
+                    break;
+                    /*
+                case 1:
+                    this.game.ctx.drawImage();
+                    break;
+                case 2:
+                    this.game.ctx.drawImage();
+                    break;
+                case 3:
+                    this.game.ctx.drawImage();
+                    break;
+                case 4:
+                    this.game.ctx.drawImage();vc  /  
+                    break;
+                case 5:
+                    this.game.ctx.drawImage();
+                    break;
+                case 6:
+                    this.game.ctx.drawImage();
+                    break;
+                case 7:
+                    this.game.ctx.drawImage();
+                    break;
+                case 8:
+                    this.game.ctx.drawImage();
+                    break;
+                case 9:
+                    this.game.ctx.drawImage();
+                    break;
+                    */
+                default:
+                    break;
+            }
+            
+            this.game.ctx.fillStyle = '#FFF';
+            this.game.ctx.textBaseline = 'alphabetic';
+            this.game.ctx.font = '12px "sans-serif"';
+            this.game.ctx.fillText(this.blockStock[i],this.game.canvas.width - 64 -(BLOCKKINDNUM*BIGFRAMESIZE) + (BIGFRAMESIZE-LITTLEFRAMESIZE)/2 + i*BIGFRAMESIZE,20 + (BIGFRAMESIZE - LITTLEFRAMESIZE)/2 + LITTLEFRAMESIZE,LITTLEFRAMESIZE,LITTLEFRAMESIZE);
+            
+        }
+    }
+    
+    setBlock(){
+        if(this.keyboard.s === true){
+            if(this.preMotion === 'right'){
+                if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
+                    this.blockStock[this.selectBlockNumber]--;
+                        this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] = this.selectBlockNumber; 
+                }
+            }else if(this.preMotion === 'left'){
+                if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
+                    this.blockStock[this.selectBlockNumber]--;
+                        this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] = this.selectBlockNumber; 
+                }
+            }else if(this.preMotion === 'center'){
+                console.log('digdig');
+                if(this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
+                    this.blockStock[this.selectBlockNumber]--;
+                        this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] = this.selectBlockNumber; 
+                }
+            }else if(this.preMotion === 'up'){
+                if(this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
+                    this.blockStock[this.selectBlockNumber]--;
+                        this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] = this.selectBlockNumber; 
+                        
+                }
+            }
+        }
+    }
+    
+    digBlock(){
+        if(this.keyboard.d === true && this.game.frame - this.game.preDigFrame > this.DIGINTERVAL){
+            /*
+            毎回そうだが繰り返しはswitchと相性が悪いのか？
+            switch(this.preMotion){
+                case 'right':
+                    if(this.game.map[Math.round((this.coreY)/32)][Math.round((this.coreX + 32)/32)] !== 0){
+                        this.blockStock[this.game.map[Math.round((this.coreY)/32)][Math.round((this.coreX + 32)/32)]]++;
+                        this.game.map[Math.round((this.coreY)/32)][Math.round((this.coreX + 32)/32)] = 0; 
+                    }
+                    break;
+                case 'left':
+                    if(this.game.map[Math.round(this.coreY)][Math.round(this.coreX - 32)] !== 0){
+                        this.blockStock[this.game.map[Math.round(this.coreY)][Math.round(this.coreX - 32)]]++;
+                        this.game.map[Math.round(this.coreY)][Math.round(this.coreX - 32)] = 0; 
+                    }
+                    break;
+                case 'center':
+                    if(this.game.map[Math.round((this.coreY + 32)/32)][Math.round((this.coreX)/32)] !== 0){
+                        this.blockStock[this.game.map[Math.round((this.coreY + 32)/32)][Math.round((this.coreX)/32)]]++;
+                        this.game.map[Math.round((this.coreY + 32)/32)][Math.round((this.coreX)/32)] = 0; 
+                    }
+                    break;
+                case 'up':
+                    if(this.game.map[Math.round((this.coreY - 32)/32)][Math.round(this.coreX/32)] !== 0){
+                        this.blockStock[this.game.map[Math.round(this.coreY - 32)][Math.round(this.coreX)]]++;
+                        this.game.map[Math.round((this.coreY - 32)/32)][Math.round(this.coreX/32)] = 0; 
+                    }
+                    break;
+            }
+            */
+            if(this.preMotion === 'right'){
+                if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] !== 0){
+                        this.blockStock[this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)]]++;
+                        this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] = 0; 
+                }
+            }else if(this.preMotion === 'left'){
+                if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] !== 0){
+                        this.blockStock[this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)]]++;
+                        this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] = 0; 
+                }
+            }else if(this.preMotion === 'center'){
+                console.log('digdig');
+                if(this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] !== 0){
+                        this.blockStock[this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)]]++;
+                        this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] = 0; 
+                        console.log('dig');
+                }
+            }else if(this.preMotion === 'up'){
+                if(this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] !== 0){
+                        this.blockStock[this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor((this.coreX)/32)]]++;
+                        this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] = 0; 
+                        
+                }
+            }
+            
+            this.game.preDigFrame = this.game.frame;
+        }
+    }
+    
+    attack(){
+        
+    }
+    
     hitBox(){
-        if(this.game.map[Math.floor(this.y/32)][Math.floor(this.x/32)] !== 0){
+        if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x + 2)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
-        }else if(this.game.map[Math.floor((this.y+30)/32)][Math.floor(this.x/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+28)/32)][Math.floor((this.x + 2)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
-        }else if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+32)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x+30)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
-        }else if(this.game.map[Math.floor((this.y+30)/32)][Math.floor((this.x+32)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+28)/32)][Math.floor((this.x+30)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
         }
         
-        if(this.game.map[Math.floor(this.y/32)][Math.floor(this.x/32)] !== 0){
+        if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+2)/32)] !== 0){
             this.y = this.preY;
             this.vy = 0;
-        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor(this.x/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor((this.x+2)/32)] !== 0){
             this.y = this.preY;
             this.vy = 0;
-        }else if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+32)/32)] !== 0){
+        }else if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+30)/32)] !== 0){
             this.y = this.preY;
             this.vy = 0;
-        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor((this.x+32)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor((this.x+30)/32)] !== 0 && keyboard.space !== true){
             this.y = this.preY;
             this.vy = 0;
         }
@@ -329,6 +548,9 @@ class Charactor{
     caluculate(){
         this.x += this.vx;
         this.y += this.vy;
+        
+        this.coreX = (this.x + this.x + 30)/2;
+        this.coreY = (this.y + this.y + 30)/2;
     }
     
     showHP(){
@@ -466,7 +688,5 @@ const menu = new Menu(game);
 const world = new World(game);
 
 const charactor = new Charactor(game,10,10);
-
-game.gameMode = 0;
 
 game.main();

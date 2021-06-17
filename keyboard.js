@@ -24,6 +24,19 @@ class Keyboard {
         this.q = false;
         this.t = false;
         
+        // 数字
+        this.one = false;
+        this.two = false;
+        this.three = false;
+        this.four = false;
+        this.five = false;
+        this.six = false;
+        this.seven = false;
+        this.eight = false;
+        this.nine = false;
+        this.zero = false;
+        
+        
         // 決定キー
         this.enter = false;
         
@@ -94,6 +107,48 @@ function keyDown(event){
         case 84:
             keyboard.t = true;
             break;
+            
+                
+        case 49:
+            keyboard.one = true;
+            break;
+            
+        case 50:
+            keyboard.two = true;
+            break;
+            
+        case 51:
+            keyboard.three = true;
+            break;
+            
+        case 52:
+            keyboard.four = true;
+            break;
+            
+        case 53:
+            keyboard.five = true;
+            break;
+            
+        case 54:
+            keyboard.six = true;
+            break;
+            
+        case 55:
+            keyboard.seven = true;
+            break;
+            
+        case 56:
+            keyboard.eight = true;
+            break;
+            
+        case 57:
+            keyboard.nine = true;
+            break;
+            
+        case 48:
+            keyboard.zero = true;
+            break;
+            
             
         case 13:
             keyboard.enter = true;
@@ -170,6 +225,46 @@ function keyUp (event){
         case 84:
             keyboard.t = false;
             break;
+            case 49:
+            keyboard.one = false;
+            break;
+            
+        case 50:
+            keyboard.two = false;
+            break;
+            
+        case 51:
+            keyboard.three = false;
+            break;
+            
+        case 52:
+            keyboard.four = false;
+            break;
+            
+        case 53:
+            keyboard.five = false;
+            break;
+            
+        case 54:
+            keyboard.six = false;
+            break;
+            
+        case 55:
+            keyboard.seven = false;
+            break;
+            
+        case 56:
+            keyboard.eight = false;
+            break;
+            
+        case 57:
+            keyboard.nine = false;
+            break;
+            
+        case 48:
+            keyboard.zero = false;
+            break;
+            
             
         case 13:
             keyboard.enter = false;
