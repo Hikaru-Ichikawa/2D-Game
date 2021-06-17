@@ -188,7 +188,7 @@ class Charactor{
         this.SLOWMAXSPEED = 3;
         this.SPEED = this.NORMALSPEED;
         this.MAXSPEED = this.NORMALMAXSPEED;
-        this.jump = 7;
+        this.jump = 7.75;
         this.FRICTION = 0.3;
         this.GRAVITY = 0.4;
         this.chanceGetForceDamage = 15;
@@ -308,7 +308,7 @@ class Charactor{
             }
         }
         
-        if(this.keyboard.space === true && ((this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x+2)/32)] !== 0) ||(this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x + 30)/32)] !== 0))){
+        if(this.keyboard.space === true && ((this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x+4)/32)] !== 0) ||(this.game.map[Math.floor((this.y + 35)/32)][Math.floor((this.x + 28)/32)] !== 0))){
             this.vy = -this.jump;
         }
     }
@@ -496,37 +496,37 @@ class Charactor{
     }
     
     hitBox(){
-        if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x + 2)/32)] !== 0){
+        if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x + 4)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
-        }else if(this.game.map[Math.floor((this.y+28)/32)][Math.floor((this.x + 2)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+28)/32)][Math.floor((this.x + 4)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
-        }else if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x+30)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x+28)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
-        }else if(this.game.map[Math.floor((this.y+28)/32)][Math.floor((this.x+30)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+28)/32)][Math.floor((this.x+28)/32)] !== 0){
             this.x = this.preX;
             this.vx = 0;
         }
         
-        if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+2)/32)] !== 0){
+        if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x+4)/32)] !== 0){
             this.y = this.preY;
             this.vy = 0;
-        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor((this.x+2)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+29)/32)][Math.floor((this.x+4)/32)] !== 0){
             this.y = this.preY;
             this.vy = 0;
-        }else if(this.game.map[Math.floor(this.y/32)][Math.floor((this.x+30)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x+28)/32)] !== 0){
             this.y = this.preY;
             this.vy = 0;
-        }else if(this.game.map[Math.floor((this.y+32)/32)][Math.floor((this.x+30)/32)] !== 0 && keyboard.space !== true){
+        }else if(this.game.map[Math.floor((this.y+29)/32)][Math.floor((this.x+28)/32)] !== 0 && keyboard.space !== true){
             this.y = this.preY;
             this.vy = 0;
         }
     }
     
     touchBlock(){
-        if((this.game.map[Math.floor((this.y + 40)/32)][Math.floor(this.x/32)] !== 0) || (this.game.map[Math.floor((this.y + 40)/32)][Math.floor((this.x+32)/32)] !== 0)){
+        if((this.game.map[Math.floor((this.y + 33)/32)][Math.floor(this.x/32)] !== 0) || (this.game.map[Math.floor((this.y + 40)/32)][Math.floor((this.x+32)/32)] !== 0)){
             if(this.vx < this.FRICTION && this.vx > 0){
                 this.vx = 0;
             }else if(this.vx > -this.FRICTION && this.vx < 0){
