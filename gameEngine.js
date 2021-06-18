@@ -238,6 +238,12 @@ class Charactor{
         
         this.soundKnockOut = new Audio();
         this.soundKnockOut.src = 'sources/sounds/KO.mp3';
+        
+        this.soundSetBlock = new Audio();
+        this.soundSetBlock.src = 'sources/sounds/setBlock.mp3';
+        
+        this.soundDig = new Audio();
+        this.soundDig.src = 'sources/sounds/dig.mp3';
     }
     
     act(){
@@ -250,10 +256,10 @@ class Charactor{
         
         this.move();
         
-        if((this.x <  0 || this.x >= this.game.canvas.width) || (this.y < 0 || this.y >= this.game.canvas.height - 64)){
+        if((this.x <  0 || this.x >= this.game.canvas.width) || (this.y < 32 || this.y >= this.game.canvas.height - 64)){
             this.hp = -1;
-            this.x = 10;
-            this.y = 10;
+            this.x = 64;
+            this.y = 64;
             this.confirmAlive();
         }
         
@@ -416,22 +422,30 @@ class Charactor{
                 if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
                     this.blockStock[this.selectBlockNumber]--;
                         this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] = this.selectBlockNumber; 
+                        this.soundSetBlock.currentTime = 0;
+                        this.soundSetBlock.play();
                 }
             }else if(this.preMotion === 'left'){
                 if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
                     this.blockStock[this.selectBlockNumber]--;
                         this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] = this.selectBlockNumber; 
+                        this.soundSetBlock.currentTime = 0;
+                        this.soundSetBlock.play();
                 }
             }else if(this.preMotion === 'center'){
                 console.log('digdig');
                 if(this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
                     this.blockStock[this.selectBlockNumber]--;
                         this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] = this.selectBlockNumber; 
+                        this.soundSetBlock.currentTime = 0;
+                        this.soundSetBlock.play();
                 }
             }else if(this.preMotion === 'up'){
                 if(this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] === 0 && this.blockStock[this.selectBlockNumber] > 0){
                     this.blockStock[this.selectBlockNumber]--;
                         this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] = this.selectBlockNumber; 
+                        this.soundSetBlock.currentTime = 0;
+                        this.soundSetBlock.play();
                         
                 }
             }
@@ -473,23 +487,30 @@ class Charactor{
                 if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] !== 0){
                         this.blockStock[this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)]]++;
                         this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX + 32)/32)] = 0; 
+                        this.soundDig.currentTime = 0;
+                        this.soundDig.play();
                 }
             }else if(this.preMotion === 'left'){
                 if(this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] !== 0){
                         this.blockStock[this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)]]++;
                         this.game.map[Math.floor((this.coreY)/32)][Math.floor((this.coreX - 32)/32)] = 0; 
+                        this.soundDig.currentTime = 0;
+                        this.soundDig.play();
                 }
             }else if(this.preMotion === 'center'){
                 console.log('digdig');
                 if(this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] !== 0){
                         this.blockStock[this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)]]++;
                         this.game.map[Math.floor((this.coreY + 32)/32)][Math.floor((this.coreX)/32)] = 0; 
-                        console.log('dig');
+                        this.soundDig.currentTime = 0;
+                        this.soundDig.play();
                 }
             }else if(this.preMotion === 'up'){
                 if(this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] !== 0){
                         this.blockStock[this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor((this.coreX)/32)]]++;
                         this.game.map[Math.floor((this.coreY - 32)/32)][Math.floor(this.coreX/32)] = 0; 
+                        this.soundDig.currentTime = 0;
+                        this.soundDig.play();
                         
                 }
             }
@@ -694,6 +715,6 @@ const menu = new Menu(game);
 
 const world = new World(game);
 
-const charactor = new Charactor(game,10,10);
+const charactor = new Charactor(game,64,64);
 
 game.main();
