@@ -250,6 +250,13 @@ class Charactor{
         
         this.move();
         
+        if((this.x <  0 || this.x >= this.game.canvas.width) || (this.y < 0 || this.y >= this.game.canvas.height - 64)){
+            this.hp = -1;
+            this.x = 10;
+            this.y = 10;
+            this.confirmAlive();
+        }
+        
         this.gravity();
         
         this.touchBlock();
@@ -513,7 +520,7 @@ class Charactor{
         if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x+4)/32)] !== 0){
             this.y = this.preY;
             this.vy = 0;
-        }else if(this.game.map[Math.floor((this.y+29)/32)][Math.floor((this.x+4)/32)] !== 0){
+        }else if(this.game.map[Math.floor((this.y+29)/32)][Math.floor((this.x+4)/32)] !== 0 && keyboard.space !== true){
             this.y = this.preY;
             this.vy = 0;
         }else if(this.game.map[Math.floor((this.y+4)/32)][Math.floor((this.x+28)/32)] !== 0){
@@ -592,7 +599,7 @@ class Charactor{
     }
     
     confirmAlive(){
-        if(this.hp < 0){
+        if(this.hp <= 0){
             this.soundKnockOut.currentTime = 0;
             this.soundKnockOut.play();
             this.game.bgmPlay.pause();
