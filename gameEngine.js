@@ -646,7 +646,7 @@ class Menu {
         this.game = game;
         
         this.backgroundImage0 = new Image();
-        this.backgroundImage0.src = 'sources/backgrounds/mainImage2.jpg';
+        this.backgroundImage0.src = 'sources/backgrounds/title_sample.jpg';
         
         this.selectNum = 0;
         this.selectList = ['Play','config','quit'];
