@@ -1,5 +1,5 @@
 class Game {
-    constructor(canvasId,width,height){
+    constructor(width,height,canvasId){
         this.gameMode = 0;
         this.canvas = window.document.getElementById(canvasId || 'canvas');
         this.canvas.width = width || 1280;
@@ -10,19 +10,19 @@ class Game {
         this.charaName = null;
         
         this.backgroundImage0 = new Image();
-        this.backgroundImage0.src = 'sources/backgrounds/background.jpg';
+        this.backgroundImage0.src = 'sources/backgrounds/sky.png';
         
         this.blockImage0 = new Image();
-        this.blockImage0.src = 'sources/blocks/mapChip.png';
+        this.blockImage0.src = 'sources/blocks/null.png';
         
         this.blockImage1 = new Image();
-        this.blockImage1.src = 'sources/blocks/mapChip.png';
+        this.blockImage1.src = 'sources/blocks/soil2.png';
         
         this.blockImage2 = new Image();
-        this.blockImage2.src = 'sources/blocks/mapChip.png';
+        this.blockImage2.src = 'sources/blocks/stone2.png';
         
         this.blockImage3 = new Image();
-        this.blockImage3.src = 'sources/blocks/mapChip.png';
+        this.blockImage3.src = 'sources/blocks/grass.png';
         
         this.map = [];
         
@@ -32,7 +32,7 @@ class Game {
         
         this.bgmPlay = new Audio();
         this.bgmPlay.loop = true;
-        this.bgmPlay.src = 'sources/sounds/bgm3.mp3';
+        this.bgmPlay.src = 'sources/sounds/bgmINF.mp3';
         
         // ブラウザの使用上ページを開いてすぐに音を流すことはできないので今回は追加していない。
         this.bgmMenu = new Audio();
@@ -140,13 +140,13 @@ class World {
                 */
                 
                 if(this.game.map[y][x] === 0){
-                    this.game.ctx.drawImage(this.game.blockImage0,0,32,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage0,0,0,32,32,32*x,32*y,32,32);
                 }else if(this.game.map[y][x] === 1){
-                    this.game.ctx.drawImage(this.game.blockImage1,64,64,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage1,0,0,32,32,32*x,32*y,32,32);
                 }else if(this.game.map[y][x] === 2){
-                    this.game.ctx.drawImage(this.game.blockImage2,224,64,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage2,0,0,32,32,32*x,32*y,32,32);
                 }else if(this.game.map[y][x] === 3){
-                    this.game.ctx.drawImage(this.game.blockImage3,0,64,32,32,32*x,32*y,32,32);
+                    this.game.ctx.drawImage(this.game.blockImage3,0,0,32,32,32*x,32*y,32,32);
                 }
                 
             }
@@ -191,37 +191,38 @@ class Charactor{
         this.jump = 7.75;
         this.FRICTION = 0.3;
         this.GRAVITY = 0.4;
-        this.chanceGetForceDamage = 15;
+        this.chanceGetForceDamage = 12;
         
         this.preMotion = 'right';
         
+        // ここの記述関数を使えば繰り返さずに済みそう
         this.imageLeft = new Image();
-        this.imageLeft.src = 'sources/charactors/tohoChara.png';
+        this.imageLeft.src = 'sources/charactors/man.png';
         this.imageLeft.sx = 0;
-        this.imageLeft.sy = 48.5;
-        this.imageLeft.sw = 48.5;
-        this.imageLeft.sh = 48.5;
+        this.imageLeft.sy = 2000;
+        this.imageLeft.sw = 840;
+        this.imageLeft.sh = 840;
         
         this.imageRight = new Image();
-        this.imageRight.src = 'sources/charactors/tohoChara.png';
+        this.imageRight.src = 'sources/charactors/man.png';
         this.imageRight.sx = 0;
-        this.imageRight.sy = 97;
-        this.imageRight.sw = 48.5;
-        this.imageRight.sh = 48.5;
+        this.imageRight.sy = 2900;
+        this.imageRight.sw = 840;
+        this.imageRight.sh = 840;
         
         this.imageCenter = new Image();
-        this.imageCenter.src = 'sources/charactors/tohoChara.png';
+        this.imageCenter.src = 'sources/charactors/man.png';
         this.imageCenter.sx = 0;
         this.imageCenter.sy = 0;
-        this.imageCenter.sw = 48.5;
-        this.imageCenter.sh = 48.5;
+        this.imageCenter.sw = 840;
+        this.imageCenter.sh = 840;
         
         this.imageUp = new Image();
-        this.imageUp.src = 'sources/charactors/tohoChara.png';
+        this.imageUp.src = 'sources/charactors/man.png';
         this.imageUp.sx = 0;
-        this.imageUp.sy = 145.5;
-        this.imageUp.sw = 48.5;
-        this.imageUp.sh = 48.5;
+        this.imageUp.sy = 1000;
+        this.imageUp.sw = 840;
+        this.imageUp.sh = 840;
         
         this.STATUSHEIGHT = 25;
         this.STATUSWIDTH = 200;
@@ -707,7 +708,7 @@ class Menu {
     
 }
 
-const game = new Game();
+const game = new Game(993,640);
 
 const menu = new Menu(game);
 
@@ -715,6 +716,6 @@ const menu = new Menu(game);
 
 const world = new World(game);
 
-const charactor = new Charactor(game,64,64);
+const charactor = new Charactor(game,64,160);
 
 game.main();
